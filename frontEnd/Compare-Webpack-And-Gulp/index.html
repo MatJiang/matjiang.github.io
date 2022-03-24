@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="zh-hant-tw">
+
+<head>
+	<title>Webpack和Gulp的比較</title>
+	<meta name="description" content="這是一份來自於整天在搞後端卻跑來玩前端工具的筆記，比較Webpack和Gulp之間的差異">
+	<meta property="og:title" content="Webpack和Gulp的比較" />
+	<meta property="og:description" content="這是一份來自於整天在搞後端卻跑來玩前端工具的筆記，比較Webpack和Gulp之間的差異" />
+	<meta property="og:url" content="https://matjiang.github.io/frontend/compare-webpack-and-gulp" />
+	<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+	<style>
+		/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+		/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+		body {
+			font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+			font-size: var(--vscode-markdown-font-size, 14px);
+			padding: 0 26px;
+			line-height: var(--vscode-markdown-line-height, 22px);
+			word-wrap: break-word;
+		}
+
+		#code-csp-warning {
+			position: fixed;
+			top: 0;
+			right: 0;
+			color: white;
+			margin: 16px;
+			text-align: center;
+			font-size: 12px;
+			font-family: sans-serif;
+			background-color: #444444;
+			cursor: pointer;
+			padding: 6px;
+			box-shadow: 1px 1px 1px rgba(0, 0, 0, .25);
+		}
+
+		#code-csp-warning:hover {
+			text-decoration: none;
+			background-color: #007acc;
+			box-shadow: 2px 2px 2px rgba(0, 0, 0, .25);
+		}
+
+		body.scrollBeyondLastLine {
+			margin-bottom: calc(100vh - 22px);
+		}
+
+		body.showEditorSelection .code-line {
+			position: relative;
+		}
+
+		body.showEditorSelection .code-active-line:before,
+		body.showEditorSelection .code-line:hover:before {
+			content: "";
+			display: block;
+			position: absolute;
+			top: 0;
+			left: -12px;
+			height: 100%;
+		}
+
+		body.showEditorSelection li.code-active-line:before,
+		body.showEditorSelection li.code-line:hover:before {
+			left: -30px;
+		}
+
+		.vscode-light.showEditorSelection .code-active-line:before {
+			border-left: 3px solid rgba(0, 0, 0, 0.15);
+		}
+
+		.vscode-light.showEditorSelection .code-line:hover:before {
+			border-left: 3px solid rgba(0, 0, 0, 0.40);
+		}
+
+		.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+			border-left: none;
+		}
+
+		.vscode-dark.showEditorSelection .code-active-line:before {
+			border-left: 3px solid rgba(255, 255, 255, 0.4);
+		}
+
+		.vscode-dark.showEditorSelection .code-line:hover:before {
+			border-left: 3px solid rgba(255, 255, 255, 0.60);
+		}
+
+		.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+			border-left: none;
+		}
+
+		.vscode-high-contrast.showEditorSelection .code-active-line:before {
+			border-left: 3px solid rgba(255, 160, 0, 0.7);
+		}
+
+		.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+			border-left: 3px solid rgba(255, 160, 0, 1);
+		}
+
+		.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+			border-left: none;
+		}
+
+		img {
+			max-width: 100%;
+			max-height: 100%;
+		}
+
+		a {
+			text-decoration: none;
+		}
+
+		a:hover {
+			text-decoration: underline;
+		}
+
+		a:focus,
+		input:focus,
+		select:focus,
+		textarea:focus {
+			outline: 1px solid -webkit-focus-ring-color;
+			outline-offset: -1px;
+		}
+
+		hr {
+			border: 0;
+			height: 2px;
+			border-bottom: 2px solid;
+		}
+
+		h1 {
+			padding-bottom: 0.3em;
+			line-height: 1.2;
+			border-bottom-width: 1px;
+			border-bottom-style: solid;
+		}
+
+		h1,
+		h2,
+		h3 {
+			font-weight: normal;
+		}
+
+		table {
+			border-collapse: collapse;
+		}
+
+		table>thead>tr>th {
+			text-align: left;
+			border-bottom: 1px solid;
+		}
+
+		table>thead>tr>th,
+		table>thead>tr>td,
+		table>tbody>tr>th,
+		table>tbody>tr>td {
+			padding: 5px 10px;
+		}
+
+		table>tbody>tr+tr>td {
+			border-top: 1px solid;
+		}
+
+		blockquote {
+			margin: 0 7px 0 5px;
+			padding: 0 16px 0 10px;
+			border-left-width: 5px;
+			border-left-style: solid;
+		}
+
+		code {
+			font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+			font-size: 1em;
+			line-height: 1.357em;
+		}
+
+		body.wordWrap pre {
+			white-space: pre-wrap;
+		}
+
+		pre:not(.hljs),
+		pre.hljs code>div {
+			padding: 16px;
+			border-radius: 3px;
+			overflow: auto;
+		}
+
+		pre code {
+			color: var(--vscode-editor-foreground);
+			tab-size: 4;
+		}
+
+		/** Theming */
+
+		.vscode-light pre {
+			background-color: rgba(220, 220, 220, 0.4);
+		}
+
+		.vscode-dark pre {
+			background-color: rgba(10, 10, 10, 0.4);
+		}
+
+		.vscode-high-contrast pre {
+			background-color: rgb(0, 0, 0);
+		}
+
+		.vscode-high-contrast h1 {
+			border-color: rgb(0, 0, 0);
+		}
+
+		.vscode-light table>thead>tr>th {
+			border-color: rgba(0, 0, 0, 0.69);
+		}
+
+		.vscode-dark table>thead>tr>th {
+			border-color: rgba(255, 255, 255, 0.69);
+		}
+
+		.vscode-light h1,
+		.vscode-light hr,
+		.vscode-light table>tbody>tr+tr>td {
+			border-color: rgba(0, 0, 0, 0.18);
+		}
+
+		.vscode-dark h1,
+		.vscode-dark hr,
+		.vscode-dark table>tbody>tr+tr>td {
+			border-color: rgba(255, 255, 255, 0.18);
+		}
+	</style>
+
+	<style>
+		/* Tomorrow Theme */
+		/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+		/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+		/* Tomorrow Comment */
+		.hljs-comment,
+		.hljs-quote {
+			color: #8e908c;
+		}
+
+		/* Tomorrow Red */
+		.hljs-variable,
+		.hljs-template-variable,
+		.hljs-tag,
+		.hljs-name,
+		.hljs-selector-id,
+		.hljs-selector-class,
+		.hljs-regexp,
+		.hljs-deletion {
+			color: #c82829;
+		}
+
+		/* Tomorrow Orange */
+		.hljs-number,
+		.hljs-built_in,
+		.hljs-builtin-name,
+		.hljs-literal,
+		.hljs-type,
+		.hljs-params,
+		.hljs-meta,
+		.hljs-link {
+			color: #f5871f;
+		}
+
+		/* Tomorrow Yellow */
+		.hljs-attribute {
+			color: #eab700;
+		}
+
+		/* Tomorrow Green */
+		.hljs-string,
+		.hljs-symbol,
+		.hljs-bullet,
+		.hljs-addition {
+			color: #718c00;
+		}
+
+		/* Tomorrow Blue */
+		.hljs-title,
+		.hljs-section {
+			color: #4271ae;
+		}
+
+		/* Tomorrow Purple */
+		.hljs-keyword,
+		.hljs-selector-tag {
+			color: #8959a8;
+		}
+
+		.hljs {
+			display: block;
+			overflow-x: auto;
+			color: #4d4d4c;
+			padding: 0.5em;
+		}
+
+		.hljs-emphasis {
+			font-style: italic;
+		}
+
+		.hljs-strong {
+			font-weight: bold;
+		}
+	</style>
+
+	<style>
+		/*
+ * Markdown PDF CSS
+ */
+
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+			padding: 0 12px;
+		}
+
+		pre {
+			background-color: #f8f8f8;
+			border: 1px solid #cccccc;
+			border-radius: 3px;
+			overflow-x: auto;
+			white-space: pre-wrap;
+			overflow-wrap: break-word;
+		}
+
+		pre:not(.hljs) {
+			padding: 23px;
+			line-height: 19px;
+		}
+
+		blockquote {
+			background: rgba(127, 127, 127, 0.1);
+			border-color: rgba(0, 122, 204, 0.5);
+		}
+
+		.emoji {
+			height: 1.4em;
+		}
+
+		code {
+			font-size: 14px;
+			line-height: 19px;
+		}
+
+		/* for inline code */
+		:not(pre):not(.hljs)>code {
+			color: #C9AE75;
+			/* Change the old color so it seems less like an error */
+			font-size: inherit;
+		}
+
+		/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+		.page {
+			page-break-after: always;
+		}
+	</style>
+
+	<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+
+<body>
+	<script>
+		mermaid.initialize({
+			startOnLoad: true,
+			theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+				? 'dark'
+				: 'default'
+		});
+	</script>
+	<h1
+		id="%E5%89%8D%E7%AB%AF%E5%BB%BA%E7%BD%AE%E8%88%87%E8%87%AA%E5%8B%95%E5%8C%96%E9%81%B8%E9%A0%85-%E7%AD%86%E8%A8%98---omit-in-toc">
+		<strong>前端建置與自動化選項 筆記</strong><!-- omit in toc -->
+	</h1>
+	<blockquote>
+		<p>Author：Mat<br>
+			Date：2022-03-20<br>
+			Description：談談前端建置與自動化選項</p>
+	</blockquote>
+	<h2 id="%E7%9B%AE%E9%8C%84---omit-in-toc"><strong>目錄</strong><!-- omit in toc -->
+	</h2>
+	<ul>
+		<li><a href="#%E5%89%8D%E8%A8%80"><strong>前言</strong></a></li>
+		<li><a href="#%E8%A9%A6%E8%A9%A6webpack-loader"><strong>試試webpack loader</strong></a>
+			<ul>
+				<li><a href="#%E5%BE%9Enpm%E5%AE%89%E8%A3%9Dloader"><strong>從npm安裝loader</strong></a></li>
+				<li><a
+						href="#%E8%A8%AD%E5%AE%9Awebpack%E5%9F%B7%E8%A1%8Ccss%E8%AE%80%E5%8F%96"><strong>設定webpack執行css讀取</strong></a>
+				</li>
+				<li><a href="#%E5%82%B3%E9%81%9E%E5%8F%83%E6%95%B8%E7%B5%A6loader"><strong>傳遞參數給Loader</strong></a></li>
+			</ul>
+		</li>
+		<li><a href="#gulp%E8%88%87webpack%E7%9A%84%E5%B7%AE%E7%95%B0"><strong>Gulp與Webpack的差異</strong></a>
+			<ul>
+				<li><a href="#%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%8C%96"><strong>工作流程化</strong></a></li>
+			</ul>
+		</li>
+		<li><a href="#%E7%8E%A9%E7%8E%A9gulp%E5%90%A7"><strong>玩玩Gulp吧</strong></a>
+			<ul>
+				<li><a href="#%E4%BD%BF%E7%94%A8npm%E5%AE%89%E8%A3%9Dgulp"><strong>使用npm安裝Gulp</strong></a></li>
+				<li><a href="#%E5%BB%BA%E7%AB%8Bgulpfilejs"><strong>建立gulpfile.js</strong></a>
+					<ul>
+						<li><a href="#gulpfilejs%E7%AF%84%E4%BE%8B"><strong>gulpfile.js範例</strong></a></li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+		<li><a href="#%E7%B5%84%E5%90%88gulp%E5%92%8Cwebpack"><strong>組合gulp和webpack</strong></a>
+			<ul>
+				<li><a href="#%E7%9B%AE%E6%A8%99%E6%8C%87%E5%AE%9A"><strong>目標指定</strong></a></li>
+				<li><a href="#example-files"><strong>Example Files</strong></a></li>
+				<li><a href="#gulp-tasks"><strong>Gulp Tasks</strong></a>
+					<ul>
+						<li><a
+								href="#%E5%AE%9A%E7%BE%A9gulp%E9%9C%80%E8%A6%81%E7%9A%84%E6%93%B4%E5%85%85%E6%A8%A1%E7%B5%84"><strong>定義Gulp需要的擴充模組</strong></a>
+						</li>
+						<li><a
+								href="#%E5%AF%AB%E6%88%90task%E6%94%BE%E5%88%B0gulpfile"><strong>寫成task放到gulpfile</strong></a>
+						</li>
+						<li><a href="#%E5%9F%B7%E8%A1%8Cgulp%E7%9A%84task"><strong>執行gulp的task</strong></a></li>
+						<li><a
+								href="#%E5%BE%9Egulp%E5%82%B3%E9%81%9Ewebpackconfig%E7%89%A9%E4%BB%B6%E5%9F%B7%E8%A1%8Cwebpack"><strong>從gulp傳遞webpack.config物件執行webpack</strong></a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+		<li><a href="#%E7%B5%90%E8%AA%9E"><strong>結語</strong></a></li>
+		<li><a href="#%E5%8F%83%E8%80%83"><strong>參考</strong></a></li>
+	</ul>
+	<hr>
+	<h2 id="%E5%89%8D%E8%A8%80"><strong>前言</strong></h2>
+	<p>Webpack預設情況下，僅有處理javascript的優化，對於css的處理則是需要另外載入<a href="https://webpack.js.org/loaders/"
+			title="Loaders">loader</a>做規劃，當然這個也是被bundle的資源之一</p>
+	<p>對於webpack來說，它比較想做的事情是把css以inline的方式載入，從js檔案中也寫個import css，然後再把css放進<code>&lt;style&gt;</code>的標籤中</p>
+	<p>當然也有抽出import的css，再做成獨立css檔案的做法，為了瀏覽器的緩存機制，一般我們是比較傾向這種做法的</p>
+	<p>另外前端常用的工具：Gulp，也能夠做到差不多的事情，那接下來就是兩種都試試看，看一下差在哪裡</p>
+	<hr>
+	<h2 id="%E8%A9%A6%E8%A9%A6webpack-loader"><strong>試試webpack loader</strong></h2>
+	<h3 id="%E5%BE%9Enpm%E5%AE%89%E8%A3%9Dloader"><strong>從npm安裝loader</strong></h3>
+	<p>萬用的起手式，就是使用npm裝套件，這邊就是安裝<code>css-loader</code>和<code>style-loader</code></p>
+	<pre class="hljs"><code><div>npm install css-loader style-loader --save-dev
+</div></code></pre>
+	<p><img src="./Images/01.png" alt="安裝loader" title="安裝loader"></p>
+	<hr>
+	<h3 id="%E8%A8%AD%E5%AE%9Awebpack%E5%9F%B7%E8%A1%8Ccss%E8%AE%80%E5%8F%96"><strong>設定webpack執行css讀取</strong></h3>
+	<p>準備的範例檔案，js檔案內都寫上了要import的內容，分別都指向不一樣的css檔案</p>
+	<p><img src="./Images/02.png" alt="範例檔案" title="範例檔案"></p>
+	<p>當然使用的config也要做對應載入的調整，不免俗的打包工具要試一下合併結果</p>
+	<pre class="hljs"><code><div><span class="hljs-keyword">const</span> path = <span class="hljs-built_in">require</span>(<span class="hljs-string">'path'</span>);
+
+<span class="hljs-built_in">module</span>.exports = {
+    <span class="hljs-attr">mode</span>: <span class="hljs-string">'production'</span>,
+    <span class="hljs-attr">entry</span>: {
+        <span class="hljs-attr">app</span>: <span class="hljs-string">'./src/app.js'</span>,
+        <span class="hljs-attr">index</span>: <span class="hljs-string">'./src/index.js'</span>,
+        <span class="hljs-attr">main</span>: [<span class="hljs-string">'./src/app.js'</span>, <span class="hljs-string">'./src/index.js'</span>]
+    },
+    <span class="hljs-attr">output</span>: {
+        <span class="hljs-attr">filename</span>: <span class="hljs-string">'[name].js'</span>,
+        <span class="hljs-attr">path</span>: path.resolve(__dirname, <span class="hljs-string">'dist'</span>),
+    },
+    <span class="hljs-attr">module</span>: {
+        <span class="hljs-attr">rules</span>: [
+            {
+                <span class="hljs-attr">test</span>: <span class="hljs-regexp">/\.css$/i</span>,
+                <span class="hljs-attr">use</span>: [<span class="hljs-string">'style-loader'</span>, <span class="hljs-string">'css-loader'</span>],
+            },
+        ],
+    },
+};
+</div></code></pre>
+	<p>再來就是呼叫webpack做事情了，我在package.json檔案中加入buildCss的指令<code>webpack --config css.config.js</code>，直接輸入<code>npx webpack --config css.config.js</code>也可以執行
+	</p>
+	<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"scripts"</span>: {
+    <span class="hljs-attr">"test"</span>: <span class="hljs-string">"echo \"Error: no test specified\" &amp;&amp; exit 1"</span>,
+    <span class="hljs-attr">"build"</span>: <span class="hljs-string">"webpack --config prod.config.js"</span>,
+    <span class="hljs-attr">"buildCss"</span>: <span class="hljs-string">"webpack --config css.config.js"</span>
+  }
+}
+</div></code></pre>
+	<pre class="hljs"><code><div>npm run buildCss
+</div></code></pre>
+	<p><img src="./Images/03.png" alt="建置測試" title="建置測試"></p>
+	<p>產出結果，合併的也是沒什麼問題，每一個匯入的css檔案都放在<code>&lt;style&gt;&lt;/style&gt;</code>中</p>
+	<p><img src="./Images/04.png" alt="建置測試main.html" title="建置測試main.html"></p>
+	<h3 id="%E5%82%B3%E9%81%9E%E5%8F%83%E6%95%B8%E7%B5%A6loader"><strong>傳遞參數給Loader</strong></h3>
+	<p>前一步驟中可以發現到每一個import進去的css檔案都會變成一組style的標籤，webpack執行的動作是透過css-loader讀取實體檔案取得stream，接著再靠style-loader將css的內容插入到header中，而style-loader可以透過傳遞參數的方式將內容合併到一個style標籤中，所以將config調整一下，將插入的模式改變
+	</p>
+	<pre class="hljs"><code><div><span class="hljs-keyword">const</span> path = <span class="hljs-built_in">require</span>(<span class="hljs-string">'path'</span>);
+
+<span class="hljs-built_in">module</span>.exports = {
+    <span class="hljs-attr">mode</span>: <span class="hljs-string">'production'</span>,
+    <span class="hljs-attr">entry</span>: {
+        <span class="hljs-attr">app</span>: <span class="hljs-string">'./src/app.js'</span>,
+        <span class="hljs-attr">index</span>: <span class="hljs-string">'./src/index.js'</span>,
+        <span class="hljs-attr">main</span>: [<span class="hljs-string">'./src/app.js'</span>, <span class="hljs-string">'./src/index.js'</span>]
+    },
+    <span class="hljs-attr">output</span>: {
+        <span class="hljs-attr">filename</span>: <span class="hljs-string">'[name].js'</span>,
+        <span class="hljs-attr">path</span>: path.resolve(__dirname, <span class="hljs-string">'dist'</span>),
+    },
+    <span class="hljs-attr">module</span>: {
+        <span class="hljs-attr">rules</span>: [
+            {
+                <span class="hljs-attr">test</span>: <span class="hljs-regexp">/\.css$/i</span>,
+                <span class="hljs-attr">use</span>: [{
+                    <span class="hljs-attr">loader</span>: <span class="hljs-string">'style-loader'</span>,
+                    <span class="hljs-attr">options</span>: {
+                        <span class="hljs-attr">injectType</span>: <span class="hljs-string">'singletonStyleTag'</span>,
+                    },
+                }, <span class="hljs-string">'css-loader'</span>],
+            },
+        ],
+    },
+};
+</div></code></pre>
+	<p>可以看到在style-loader中送進了一個injectType為singletonStyleTag的參數，調整完之後再做一次webpack，成品就可以看到原本分開的style標籤被合成再一起了</p>
+	<p><img src="./Images/05.png" alt="合併的style tag" title="合併的style tag"></p>
+	<hr>
+	<h2 id="gulp%E8%88%87webpack%E7%9A%84%E5%B7%AE%E7%95%B0"><strong>Gulp與Webpack的差異</strong></h2>
+	<h3 id="%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%8C%96"><strong>工作流程化</strong></h3>
+	<p>Gulp與Webpack兩者都是屬於前端的工具，但定位點其實有明顯的不一樣</p>
+	<p>Gulp注重的是工作流程，所以它的內容就是配置一大堆的task，並且定義task應該要做些什麼，像是檔案搬移、內容壓縮合併，簡單來說就是個Task Runner，你想幹什麼都需要給它做提前定義</p>
+	<p>Webpack注重的是模組打包，可以把所有的資源(.js、.css、.json)都看成一種模組，透過想要執行的項目載入loader和plugins對這些資源進行處理，打包成最合適瀏覽的載入方式，尤其是一些前端框架的編譯，就我來看它比較像是一個編譯器
+	</p>
+	<p>可能會覺得兩個都能做差不多的事情，但兩種都摸了一下之後，其實就知道兩個有點不太一樣，webpack能做的事情在gulp可以透過載入各種擴充完成，甚至webpack官網上都寫出webpack-stream被稱為gulp-webpack模組(<a
+			href="https://webpack.js.org/guides/integrations/#gulp"
+			title="Webpack - Gulp">參考</a>)，就是因為這樣，所以容易認為這兩個是差不多的東西，對於後端小白來說，gulp比較親民一點，能在gulpfile.js看到相依的模組，和cs檔案上面那一整排的using
+		namespace差不多，webpack需要透過檢視進入點的js來看有什麼要一起被打包的東西，並且常配合的模組都是前端框架(例如：Vue、React、AngularJs)，沒有在寫的人來看真心不友善</p>
+	<p>不過幾次這樣操作node.js的建置環境下來，感覺npm
+		modules之間像是平行的關係，雖然沒有特別試過，但我猜可以在package.json中呼叫webpack執行完畢後去找gulp，而gulp本身就可以透過webpack-stream的擴充去使用webpack</p>
+	<p>但就特性來說，我認為比較適合的方向是使用gulp來做佈署動作，而webpack適合在開發者自己的環境中做前端模組化開發使用</p>
+	<blockquote>
+		<p><strong>題外話</strong>：<br>
+			看到似乎很神，用來排除未使用的css載入的PurgeCSS (<a href="https://purgecss.com/"
+				title="PurgeCss">官網</a>)，不管是gulp還是webpack都有相關的插件能夠達成，但瞄了幾眼發現需要讀取到實際載入的html實體檔案就關掉了，對於隨時可以從後台更換內容的CMS系統來說，這個似乎是做不太到
+		</p>
+	</blockquote>
+	<hr>
+	<h2 id="%E7%8E%A9%E7%8E%A9gulp%E5%90%A7"><strong>玩玩Gulp吧</strong></h2>
+	<h3 id="%E4%BD%BF%E7%94%A8npm%E5%AE%89%E8%A3%9Dgulp"><strong>使用npm安裝Gulp</strong></h3>
+	<p>已經裝了很多次npm的package了，現在就簡單一點直接來一套指令，詳細的步驟可以參考<a href="https://gulpjs.com/docs/en/getting-started/quick-start/"
+			title="Gulp - Quick Start">官方網站</a></p>
+	<ul>
+		<li>在Local Packages安裝gulp</li>
+		<li>在Global Packages安裝gulp-cli</li>
+	</ul>
+	<pre class="hljs"><code><div>npm i gulp --save-dev &amp; npm i gulp-cli -g
+</div></code></pre>
+	<p><img src="./Images/06.png" alt="Gulp安裝" title="Gulp安裝"></p>
+	<h3 id="%E5%BB%BA%E7%AB%8Bgulpfilejs"><strong>建立gulpfile.js</strong></h3>
+	<p>相對於webpack的進入點來說，這一點就不一樣了，webpack的起手式是<code>npm run {build定義} --config {指定config}</code>，或者是<code>npx webpack --config {指定config}</code>，當然也可以完全不指定config，都走預設值設定，但我想應該蠻少人能這樣做
+	</p>
+	<p>Gulp的起手式非常簡單，切到專案根目錄，打一個<code>gulp</code>就開始執行了，只是要求一定要有個gulpfile.js來做它程式碼的進入點，沒有的話就會很乾脆地告訴你缺了這個檔案</p>
+	<p><img src="./Images/07.png" alt="Gulp缺少Gulpfile.js" title="Gulp缺少Gulpfile.js"></p>
+	<h4 id="gulpfilejs%E7%AF%84%E4%BE%8B"><strong>gulpfile.js範例</strong></h4>
+	<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">defaultTask</span>(<span class="hljs-params">cb</span>) </span>{
+    <span class="hljs-comment">// place code for your default task here</span>
+
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Hello Gulp'</span>);
+
+    cb();
+}
+
+exports.default = defaultTask
+</div></code></pre>
+	<p>接著就是用個<code>gulp</code>來執行這個定義的default task，就是這麼短，走個default保留字，預設就會去跑囉，而且執行的事情和壓縮js還是壓縮css沒有半毛關係</p>
+	<pre class="hljs"><code><div>gulp
+</div></code></pre>
+	<p>執行畫面</p>
+	<p><img src="./Images/08.png" alt="Gulp執行畫面" title="Gulp執行畫面"></p>
+	<p>其實做到這裡就會非常有感gulp和webpack的差異處了，webpack預設執行js檔案從npm拉相關的套件出來然後和js檔案本體一起壓縮，想要執行其它的事情則要另外掛loader或plugin(例如：想要做.vue或.ts的建置轉.js，可能這一part才是webpack的重頭戲，但非前端專精的人真是有看沒有懂)
+	</p>
+	<p>但是gulp很明顯是個什麼都沒有的空殼執行器，default task中寫個印出<code>Hello Gulp</code>，就真的只印出那一句，然後就結束任務</p>
+	<blockquote>
+		<p>備註：<br>
+			gulpfile的路徑也和webpack的config一樣可以透過指令<code>--gulpfile</code>切換，詳細可以參考gulp cli的<a
+				href="https://github.com/gulpjs/gulp/blob/master/docs/CLI.md" title="gulp CLI docs">文件</a></p>
+	</blockquote>
+	<hr>
+	<h2 id="%E7%B5%84%E5%90%88gulp%E5%92%8Cwebpack"><strong>組合gulp和webpack</strong></h2>
+	<h3 id="%E7%9B%AE%E6%A8%99%E6%8C%87%E5%AE%9A"><strong>目標指定</strong></h3>
+	<p>既然前面都說到覺得gulp和webpack應該是同時使用沒什麼問題，坐而言不如起而行，雖然從頭到尾都是坐著打字，但還是來試試看訂下一個目標，並且完成看看吧</p>
+	<p>webpack執行css bundle的方式對我來說實在不太直覺，在js上面執行import css檔案難以理解，那這邊就把css bundle的任務交付到gulp身上，最後再透過webpack產出js檔案吧</p>
+	<ul>
+		<li>gulp執行css壓縮產出</li>
+		<li>webpack執行js壓縮產出</li>
+	</ul>
+	<h3 id="example-files"><strong>Example Files</strong></h3>
+	<p>先來做一點測試檔案，以下檔案都放在src下</p>
+	<ol>
+		<li>
+			<p>all.html</p>
+			<pre class="hljs"><code><div><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-meta-keyword">html</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">"zh-hant-tw"</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">"UTF-8"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Working Together<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"./all.css"</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"stylesheet"</span> /&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>挑戰任務<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">ol</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">h2</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"red"</span>&gt;</span>合併css - 紅色<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">h2</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"blue"</span>&gt;</span>合併css - 藍色<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">ol</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"./all.js"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+
+<span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
+</div></code></pre>
+		</li>
+		<li>
+			<p>file1.js</p>
+			<pre class="hljs"><code><div><span class="hljs-keyword">import</span> $ <span class="hljs-keyword">from</span> <span class="hljs-string">'jquery'</span>;
+
+$(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    $(<span class="hljs-string">'body'</span>).append($(<span class="hljs-string">'&lt;div&gt;Hello! this is first file.&lt;/div&gt;'</span>))
+})
+</div></code></pre>
+		</li>
+		<li>
+			<p>file2.js</p>
+			<pre class="hljs"><code><div><span class="hljs-keyword">import</span> $ <span class="hljs-keyword">from</span> <span class="hljs-string">'jquery'</span>;
+
+$(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    $(<span class="hljs-string">'body'</span>).append($(<span class="hljs-string">'&lt;div&gt;Hello! this is second file.&lt;/div&gt;'</span>))
+})
+</div></code></pre>
+		</li>
+		<li>
+			<p>file1.css</p>
+			<pre class="hljs"><code><div><span class="hljs-selector-class">.red</span> {
+<span class="hljs-attribute">color</span>: red;
+}
+</div></code></pre>
+		</li>
+		<li>
+			<p>file2.css</p>
+			<pre class="hljs"><code><div><span class="hljs-selector-class">.blue</span> {
+<span class="hljs-attribute">color</span>: blue;
+}
+</div></code></pre>
+		</li>
+	</ol>
+	<h3 id="gulp-tasks"><strong>Gulp Tasks</strong></h3>
+	<h4 id="%E5%AE%9A%E7%BE%A9gulp%E9%9C%80%E8%A6%81%E7%9A%84%E6%93%B4%E5%85%85%E6%A8%A1%E7%B5%84">
+		<strong>定義Gulp需要的擴充模組</strong>
+	</h4>
+	<p>既然gulp要做的事情是合併css，那就要去找需要的套件</p>
+	<p>通常我們在做建置並佈署的流程大概是刪除佈署位置的資料，再把建好的檔案移進去</p>
+	<p>大概排一下要做的事情如下圖</p>
+	<pre><code class="language-mermaid"><div class="mermaid">flowchart TD
+C{清空佈署資料夾}-->合併css檔案-->建立minify的all.css-->E(移動檔案到佈署資料夾)
+C-->執行webpack壓縮js,做成all.js-->E
+C-->|移動測試用的all.html|E
+
+</div></code></pre>
+	<p>所以可能要安裝的擴充套件指令</p>
+	<pre class="hljs"><code><div>npm i del gulp-concat-css gulp-clean-css webpack-stream --save-dev
+</div></code></pre>
+	<table>
+		<thead>
+			<tr>
+				<th style="text-align:left">npm package</th>
+				<th style="text-align:center">description</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td style="text-align:left">del</td>
+				<td style="text-align:center">刪除檔案</td>
+			</tr>
+			<tr>
+				<td style="text-align:left">gulp-concat-css</td>
+				<td style="text-align:center">合併css檔案</td>
+			</tr>
+			<tr>
+				<td style="text-align:left">gulp-clean-css</td>
+				<td style="text-align:center">minify css檔案</td>
+			</tr>
+			<tr>
+				<td style="text-align:left">webpack-stream</td>
+				<td style="text-align:center">gulp-webpack</td>
+			</tr>
+		</tbody>
+	</table>
+	<h4 id="%E5%AF%AB%E6%88%90task%E6%94%BE%E5%88%B0gulpfile"><strong>寫成task放到gulpfile</strong></h4>
+	<p>因為才玩過webpack，所以檔案總管裡面有點髒，這裡就透過src來指定想要的檔案吧</p>
+	<pre class="hljs"><code><div><span class="hljs-comment">// 匯入需要的屬性</span>
+<span class="hljs-keyword">const</span> { series, parallel, src, dest } = <span class="hljs-built_in">require</span>(<span class="hljs-string">'gulp'</span>);
+
+<span class="hljs-keyword">const</span> del = <span class="hljs-built_in">require</span>(<span class="hljs-string">'del'</span>);
+<span class="hljs-keyword">const</span> concatCss = <span class="hljs-built_in">require</span>(<span class="hljs-string">'gulp-concat-css'</span>);
+<span class="hljs-keyword">const</span> cleanCss = <span class="hljs-built_in">require</span>(<span class="hljs-string">'gulp-clean-css'</span>);
+<span class="hljs-keyword">const</span> webpack = <span class="hljs-built_in">require</span>(<span class="hljs-string">'webpack-stream'</span>);
+
+<span class="hljs-comment">/**清除dist資料夾 */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fnClear</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">return</span> del([<span class="hljs-string">'dist'</span>]);
+}
+
+<span class="hljs-comment">/**合併file css */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fnCombineCss</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">return</span> src(<span class="hljs-string">'./src/css/file*.css'</span>)
+        .pipe(concatCss(<span class="hljs-string">"all.css"</span>)) <span class="hljs-comment">// 透過 gulp-concat-css 合併成指定檔案名稱</span>
+        .pipe(cleanCss({})) <span class="hljs-comment">// 透過 gulp-clean-css 壓縮</span>
+        .pipe(dest(<span class="hljs-string">'./dist'</span>));
+}
+
+<span class="hljs-comment">/**移動範例html檔案 */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fnMoveExampleHtml</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">return</span> src(<span class="hljs-string">'./src/all.html'</span>)
+        .pipe(dest(<span class="hljs-string">'./dist'</span>));
+}
+
+<span class="hljs-comment">/**執行webpack-stream */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fnWebpack</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">return</span> src(<span class="hljs-string">'./src/file*.js'</span>)
+        .pipe(webpack({
+            <span class="hljs-attr">mode</span>: <span class="hljs-string">'production'</span>,
+            <span class="hljs-attr">output</span>: {
+                <span class="hljs-attr">filename</span>: <span class="hljs-string">'all.js'</span>,
+            }
+        }))
+        .pipe(dest(<span class="hljs-string">'./dist'</span>));
+}
+
+<span class="hljs-comment">/**測試其它webpack的用法 */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fnPack</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">return</span> src(<span class="hljs-string">'./src/entry.js'</span>, {
+        <span class="hljs-attr">allowEmpty</span>
+            : <span class="hljs-literal">true</span>
+    })
+        .pipe(webpack({
+            <span class="hljs-attr">mode</span>: <span class="hljs-string">'production'</span>,
+            <span class="hljs-attr">entry</span>: {
+                <span class="hljs-attr">file1</span>: <span class="hljs-string">'./src/file1.js'</span>,
+                <span class="hljs-attr">file2</span>: <span class="hljs-string">'./src/file2.js'</span>,
+            },
+            <span class="hljs-attr">output</span>: {
+                <span class="hljs-attr">filename</span>: <span class="hljs-string">'[name].js'</span>,
+            }
+        }))
+        .pipe(dest(<span class="hljs-string">'./dist'</span>))
+}
+
+exports.default = series(fnClear,
+    parallel(fnCombineCss, fnMoveExampleHtml, fnWebpack));
+
+<span class="hljs-comment">// 如果有必要可自己建立task，並透過gulp {task name}呼叫執行</span>
+<span class="hljs-comment">// 若需要任務列表則是gulp --tasks</span>
+exports.deployJs = fnWebpack;
+exports.deployCss = fnCombineCss;
+exports.deployHtml = fnMoveExampleHtml;
+exports.testPack = fnPack;
+
+</div></code></pre>
+	<h4 id="%E5%9F%B7%E8%A1%8Cgulp%E7%9A%84task"><strong>執行gulp的task</strong></h4>
+	<p>因為gulpfile已經寫好預設的default任務，所以只要輸入<code>gulp</code>就可以執行了</p>
+	<p>執行結果</p>
+	<p><img src="./Images/09.png" alt="流程任務執行" title="流程任務執行"></p>
+	<p>檔案總管看預期佈署的資料夾dist</p>
+	<p><img src="./Images/10.png" alt="流程任務執行 - 檔案總管" title="流程任務執行 - 檔案總管"></p>
+	<p>開啟使用產出all.js與all.css的all.html，結果符合預期</p>
+	<p><img src="./Images/11.png" alt="流程任務執行 - 瀏覽器畫面" title="流程任務執行 - 瀏覽器畫面"></p>
+	<blockquote>
+		<p>備註：<br>
+			善用gulp4提供的<strong>series</strong>、<strong>parallel</strong>來排執行順序</p>
+	</blockquote>
+	<h4 id="%E5%BE%9Egulp%E5%82%B3%E9%81%9Ewebpackconfig%E7%89%A9%E4%BB%B6%E5%9F%B7%E8%A1%8Cwebpack">
+		<strong>從gulp傳遞webpack.config物件執行webpack</strong>
+	</h4>
+	<p>前面的gulpfile範例多放了一個task來測試webpack的其它種用法，直接從pipe中輸入webpack.config</p>
+	<p>Task的名稱為<code>testPack</code>，執行後產生webpack後的file1.js與file2.js到dist資料夾下</p>
+	<p>所以就是輸入<code>gulp testPack</code>，記得要注意大小寫</p>
+	<p><img src="./Images/12.png" alt="testPack任務" title="testPack任務"></p>
+	<p>檔案總管中也有出現相關檔案，不過任務沒有做清除，所以先前做的其它檔案都還在原位</p>
+	<p><img src="./Images/13.png" alt="testPack任務 - 檔案總管" title="testPack任務 - 檔案總管"></p>
+	<p>webpack-stream還有很多種用法，可以參考一下<a href="https://www.npmjs.com/package/webpack-stream"
+			title="webpack-stream">官方文件</a></p>
+	<hr>
+	<h2 id="%E7%B5%90%E8%AA%9E"><strong>結語</strong></h2>
+	<p>實際使用上來說，的確gulp與webpack之間有許多功能透過各自的擴充套件加載後，都能做到類似的事情</p>
+	<p>gulp有明顯的順序性，而且能透過src來使用glob(<a href="https://gulpjs.com/docs/en/getting-started/explaining-globs/"
+			title="explaining-globs">參考</a>)，webpack預設下則需要將合併的檔案一一指出來，當然可以透過一些其它的套件設定在webpack.config中，來達成一樣效果的檔案搜尋(例如:<a
+			href="https://www.npmjs.com/package/glob"
+			title="glob">glob</a>)，但我想最合適的方式還是一個js檔案，然後標示出import的套件，讓webpack透過這些指示去npm尋找對應套件安裝，如同我們使用nuget會將參考套件在專案檔中寫成PackageReference一樣，到最後build的關頭才會放進去bin資料夾或application資料夾中
+	</p>
+	<p>後端仔還是在這邊淺嚐即止，生命還有更美好的事物~</p>
+	<hr>
+	<h2 id="%E5%8F%83%E8%80%83"><strong>參考</strong></h2>
+	<ol>
+		<li><a href="https://webpack.js.org/loaders/" title="Loaders">Loaders</a></li>
+		<li><a href="https://awdr74100.github.io/2020-02-26-webpack-cssloader-styleloader/"
+				title="Webpack 前端打包工具 - 使用 css-loader 與 style-loader 處理樣式表">Webpack 前端打包工具 - 使用 css-loader 與
+				style-loader 處理樣式表</a></li>
+		<li><a href="https://webpack.js.org/guides/integrations/#gulp" title="Webpack - Gulp">Webpack - Gulp</a></li>
+		<li><a href="https://purgecss.com/" title="PurgeCss">PurgeCss</a></li>
+		<li><a href="https://gulpjs.com/docs/en/getting-started/quick-start/" title="Gulp - Quick Start">gulp - Quick
+				Start</a></li>
+		<li><a href="https://github.com/gulpjs/gulp/blob/master/docs/CLI.md" title="gulp CLI docs">gulp CLI docs</a>
+		</li>
+		<li><a href="https://www.npmjs.com/package/webpack-stream" title="webpack-stream">webpack-stream</a></li>
+		<li><a href="https://gulpjs.com/docs/en/getting-started/explaining-globs/" title="explaining-globs">gulp -
+				explaining-globs</a></li>
+		<li><a href="https://www.npmjs.com/package/glob" title="glob">npm - glob</a></li>
+	</ol>
+	<!-- 連結資源 -->
+	<!-- 圖片資源 -->
+
+</body>
+
+</html>
